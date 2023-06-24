@@ -2,7 +2,7 @@
 pacman::p_load(readr, dplyr, tidyverse, psych, ggplot2)
 
 # source functions needed
-source("code/exp_density_func.R")
+source("code/functions/exp_density_func.R")
 
 # load in raw data
 owid_dta <- readr::read_csv(file = "raw_data/owid_covid_data.csv") |>
