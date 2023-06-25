@@ -10,8 +10,8 @@ options(pillar.sigfig = 6)
 
 # construct 95% confidence interval for HOM
 sim_dta |>
-    filter( # only use the 10 runs with n = 3650
-        !run_id == "lr"
+    filter( # only use the long run with n = 36500
+        run_id == "lr"
     ) |>
     mutate( # construct hospital occupancy multiplier statistic
         HOM_GBR = NHAPD1 / NPPD1,
@@ -20,10 +20,12 @@ sim_dta |>
     select( # select useful variables
         run_id, HOM_GBR, HOM_ITA
     ) |>
-    mutate(obs_num = rep(1:3650, 10)) |>
-    filter( # truncate first 40 obs of each run
+    mutate(obs_num = 1:36500) |>
+    filter( # truncate first 40 obs of the run
         obs_num > 40
-    ) |> # transform and tidy data
+    ) |>
+    mutate(obs_num = 1:36460) |>
+    select(-run_id) |> # transform and tidy data
     pivot_longer(
         cols = HOM_GBR:HOM_ITA,
         names_to = "iso_code",
@@ -35,8 +37,18 @@ sim_dta |>
             TRUE ~ "ITA"
         )
     ) |>
-    select(iso_code, run_id, obs_num, HOM) |> # construct confidence interval
-    group_by(iso_code, run_id) |>
+    select(iso_code, obs_num, HOM) |>
+    mutate( # create 5 batches each size 7292 per iso_code
+        batch = case_when(
+            obs_num <= 7292 ~ 1,
+            obs_num > 7292 & obs_num <= 14584 ~ 2,
+            obs_num > 14584 & obs_num <= 21876 ~ 3,
+            obs_num > 21876 & obs_num <= 29168 ~ 4,
+            TRUE ~ 5
+        )
+    ) |>
+    select(iso_code, batch, HOM) |> # construct confidence interval
+    group_by(iso_code, batch) |>
     summarise(y_bar = mean(HOM), .groups = "drop") |>
     group_by(iso_code) |>
     summarise(
@@ -44,7 +56,7 @@ sim_dta |>
         se = sd(y_bar) / sqrt(n()),
         .groups = "drop"
     ) |>
-    mutate(t_crit_val = qt(p = 0.05 / 2, df = 9, lower.tail = FALSE)) |>
+    mutate(t_crit_val = qt(p = 0.05 / 2, df = 4, lower.tail = FALSE)) |>
     mutate(
         lcl = z_bar - (t_crit_val * se),
         ucl = z_bar + (t_crit_val * se)
