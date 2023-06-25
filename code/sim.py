@@ -74,8 +74,8 @@ def sim_and_save(input_seed, num_days, output_name):
 
 
         schedule("LOG", state_space["time"] + 1, state_space, event_queue, event_id)
-        schedule("INF1", state_space["time"] + np.random.exponential(1/2473.32), state_space, event_queue, event_id)
-        schedule("INF2", state_space["time"] + np.random.exponential(1/1428.18), state_space, event_queue, event_id)
+        schedule("INF1", state_space["time"] + np.random.exponential(1/2469), state_space, event_queue, event_id)
+        schedule("INF2", state_space["time"] + np.random.exponential(1/1401), state_space, event_queue, event_id)
         schedule("write_csv", 100000, state_space, event_queue, event_id)
         schedule("close", num_days, state_space, event_queue, event_id)
 
@@ -98,27 +98,27 @@ def sim_and_save(input_seed, num_days, output_name):
     def INF1(state_space, event_queue, event_id):
         state_space["TI1"] = state_space["TI1"] + 1
         U = np.random.uniform(low = 0.0, high = 1.0)
-        if U <= 0.2729872:
+        if U <= 0.249:
             schedule("HOSP1", state_space["time"], state_space, event_queue, event_id)
         else:
             schedule("RNH1", state_space["time"], state_space, event_queue, event_id)
         
-        schedule("INF1", state_space["time"] + np.random.exponential(1/2473.32), state_space, event_queue, event_id)
+        schedule("INF1", state_space["time"] + np.random.exponential(1/2469), state_space, event_queue, event_id)
 
     def INF2(state_space, event_queue, event_id):
         state_space["TI2"] = state_space["TI2"] + 1
         U = np.random.uniform(low = 0.0, high = 1.0)
-        if U <= 0.3374091:
+        if U <= 0.331:
             schedule("HOSP2", state_space["time"], state_space, event_queue, event_id)
         else:
             schedule("RNH2", state_space["time"], state_space, event_queue, event_id)
-        schedule("INF2", state_space["time"] + np.random.exponential(1/1428.18), state_space, event_queue, event_id)
+        schedule("INF2", state_space["time"] + np.random.exponential(1/1401), state_space, event_queue, event_id)
 
     def HOSP1(state_space, event_queue, event_id):
         state_space["THA1"] = state_space["THA1"] + 1
         state_space["HOCC1"] = state_space["HOCC1"] + 1
         U = np.random.uniform(low = 0.0, high = 1.0)
-        if U <= 0.248187:
+        if U <= 0.379:
             schedule("DIE1", state_space["time"] + np.random.exponential(7), state_space, event_queue, event_id)
         else:
             schedule("RNH1", state_space["time"] + np.random.exponential(7), state_space, event_queue, event_id)
@@ -127,7 +127,7 @@ def sim_and_save(input_seed, num_days, output_name):
         state_space["THA2"] = state_space["THA2"] + 1
         state_space["HOCC2"] = state_space["HOCC2"] + 1
         U = np.random.uniform(low = 0.0, high = 1.0)
-        if U <= 0.2939376:
+        if U <= 0.304:
             schedule("DIE2", state_space["time"] + np.random.exponential(7), state_space, event_queue, event_id)
         else:
             schedule("RNH2", state_space["time"] + np.random.exponential(7), state_space, event_queue, event_id)
