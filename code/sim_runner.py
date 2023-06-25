@@ -2,7 +2,6 @@ from collections import namedtuple
 import random, heapq, csv, math
 import numpy as np
 import pandas as pd
-import code
 
 # import simulation function
 from sim import sim_and_save
@@ -23,3 +22,5 @@ sim_and_save(input_seed = 19, num_days = 10, output_name = "sr_10")
 
 ## long run (n = 36500)
 sim_and_save(input_seed = 79, num_days = 20, output_name = "lr")
+
+print("All Simulations Completed.")
