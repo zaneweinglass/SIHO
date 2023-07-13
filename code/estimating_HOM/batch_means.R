@@ -14,8 +14,14 @@ sim_dta |>
         run_id == "lr"
     ) |>
     mutate( # construct hospital occupancy multiplier statistic
-        HOM_GBR = NHAPD1 / NPPD1,
-        HOM_ITA = NHAPD2 / NPPD2
+        HOM_GBR = case_when(
+            (NPPD1 - NPPD2 < 0) & (NHAPD1 >= NPPD2) ~ NHAPD1 / NPPD2,
+            TRUE ~ NHAPD1 / NPPD1
+        ),
+        HOM_ITA = case_when(
+            (NPPD2 - NPPD1 < 0) & (NHAPD2 >= NPPD1) ~ NHAPD2 / NPPD1,
+            TRUE ~ NHAPD2 / NPPD2
+        )
     ) |>
     select( # select useful variables
         run_id, HOM_GBR, HOM_ITA
